@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">PuntoGPSQR</string>
     <string name="action_settings">Settings</string>
+
+    <!-- GPS -->
+    <string name="gps_settings_title">Activación del GPS</string>
+    <string name="gps_settings_message">El GPS no está activado. ¿Quieres ir a la configuración para activarlo?</string>
+    <string name="gps_settings_setting">Configurar</string>
+    <string name="gps_settings_cancel">Cancelar</string>
 </resources>
