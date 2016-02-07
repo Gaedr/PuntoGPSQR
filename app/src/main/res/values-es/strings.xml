@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PuntoGPSQR</string>
+    <string name="action_settings">Configuración</string>
+
+    <!-- QR -->
+    <string name="latitude">Latitud</string>
+    <string name="longitude">Longitud</string>
+
+    <!-- GPS -->
+    <string name="gps_settings_title">Activación del GPS</string>
+    <string name="gps_settings_message">El GPS no está activado. ¿Quieres ir a la configuración para activarlo?</string>
+    <string name="gps_settings_setting">Configurar</string>
+    <string name="gps_settings_cancel">Cancelar</string>
+
+    <!-- ERROR -->
+    <string name="error_sound">No se pudo reproducir el sonido</string>
+</resources>

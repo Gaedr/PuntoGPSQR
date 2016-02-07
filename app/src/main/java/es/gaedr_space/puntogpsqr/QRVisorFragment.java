@@ -20,6 +20,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,18 +38,19 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class QRVisorFragment extends Fragment implements ZXingScannerView.ResultHandler {
 
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
-    private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
+    //    private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
     private static final String CAMERA_ID = "CAMERA_ID";
     private ZXingScannerView mScannerView;
     private boolean mAutoFocus;
-    private ArrayList<Integer> mSelectedIndices;
+    //    private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = 0;
     private String TAG = this.getClass().getSimpleName();
     private double latitud;
     private double longitud;
 
-    public QRVisorFragment() {
+    private GPSService GPS;
 
+    public QRVisorFragment() {
     }
 
 
@@ -59,11 +61,11 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
         mScannerView = new ZXingScannerView(getActivity());
         if (savedInstanceState != null) {
             mAutoFocus = savedInstanceState.getBoolean(AUTO_FOCUS_STATE, true);
-            mSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_FORMATS);
+//            mSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_FORMATS);
             mCameraId = savedInstanceState.getInt(CAMERA_ID, -1);
         } else {
             mAutoFocus = true;
-            mSelectedIndices = null;
+//            mSelectedIndices = null;
             mCameraId = -1;
         }
         setupFormats();
@@ -72,16 +74,17 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
 
     public void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<>();
-        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
-            mSelectedIndices = new ArrayList<>();
-            for (int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
-                mSelectedIndices.add(i);
-            }
-        }
-
-        for (int index : mSelectedIndices) {
-            formats.add(ZXingScannerView.ALL_FORMATS.get(index));
-        }
+//        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
+//            mSelectedIndices = new ArrayList<>();
+//            for (int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
+//                mSelectedIndices.add(i);
+//            }
+//        }
+//
+//        for (int index : mSelectedIndices) {
+//            formats.add(ZXingScannerView.ALL_FORMATS.get(index));
+//        }
+        formats.add(BarcodeFormat.QR_CODE);
         if (mScannerView != null) {
             mScannerView.setFormats(formats);
         }
@@ -94,10 +97,21 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
             Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), notification);
             r.play();
         } catch (Exception e) {
-            Log.d(TAG, "No se pudo reproducir el sonido: " + e.getMessage());
+            Log.d(TAG, getContext().getString(R.string.error_sound) + " : " + e.getMessage());
         }
 
-        Log.d(TAG, "Contents = " + result.getText() + ", Format = " + result.getBarcodeFormat().toString());
+        if (conversorCoordenadas(result.getText())) {
+            Snackbar.make(getView(), getContext().getString(R.string.latitude) + ": " + latitud + "\n" +
+                    getContext().getString(R.string.longitude) + ": " + longitud, Snackbar.LENGTH_LONG).show();
+            Log.d(TAG, "Contents = " + result.getText() + ", Format = " + result.getBarcodeFormat().toString());
+
+            GPS = new GPSService(this.getContext());
+            if (GPS.canGetLocation()) {
+
+            } else {
+                GPS.showSettingsAlert();
+            }
+        }
     }
 
     private boolean conversorCoordenadas(String text) {

@@ -37,22 +37,24 @@ public class GPSService extends Service implements LocationListener {
     private final Context mContext;
 
     //Flags de comprobación
-    boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
-    boolean canGetLocation = false;
+    private boolean isGPSEnabled = false;
+    private boolean isNetworkEnabled = false;
+    private boolean canGetLocation = false;
 
-    Location location;
-    double latitude;
-    double longitude;
+    private Location location;
+    private double latitude;
+    private double longitude;
 
     protected LocationManager locationManager;
 
     public GPSService() {
         mContext = getApplicationContext();
+        getLocation();
     }
 
     public GPSService(Context context) {
         this.mContext = context;
+        getLocation();
     }
 
     public Location getLocation() {
@@ -103,6 +105,7 @@ public class GPSService extends Service implements LocationListener {
 
         } catch (SecurityException e) {
             e.printStackTrace();
+            return null;
         }
 
         return location;
