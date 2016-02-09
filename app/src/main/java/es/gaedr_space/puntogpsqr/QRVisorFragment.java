@@ -14,14 +14,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Clase encargada de leer el código QR y mostrar su contenido
+ *
+ * @author: Samuel Peregrina Morillas y Nieves V. Velásquez Díaz
+ * @version: 2016/02/07-1
+ */
+
 package es.gaedr_space.puntogpsqr;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,15 +49,14 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class QRVisorFragment extends Fragment implements ZXingScannerView.ResultHandler {
 
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
-    //    private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
     private static final String CAMERA_ID = "CAMERA_ID";
     private ZXingScannerView mScannerView;
     private boolean mAutoFocus;
-    //    private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = 0;
     private String TAG = this.getClass().getSimpleName();
     private double latitud;
     private double longitud;
+    private DialogFragment dialog;
 
     private GPSService GPS;
 
@@ -57,15 +67,12 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_main, container, false);
         mScannerView = new ZXingScannerView(getActivity());
         if (savedInstanceState != null) {
             mAutoFocus = savedInstanceState.getBoolean(AUTO_FOCUS_STATE, true);
-//            mSelectedIndices = savedInstanceState.getIntegerArrayList(SELECTED_FORMATS);
             mCameraId = savedInstanceState.getInt(CAMERA_ID, -1);
         } else {
             mAutoFocus = true;
-//            mSelectedIndices = null;
             mCameraId = -1;
         }
         setupFormats();
@@ -74,16 +81,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
 
     public void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<>();
-//        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
-//            mSelectedIndices = new ArrayList<>();
-//            for (int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
-//                mSelectedIndices.add(i);
-//            }
-//        }
-//
-//        for (int index : mSelectedIndices) {
-//            formats.add(ZXingScannerView.ALL_FORMATS.get(index));
-//        }
         formats.add(BarcodeFormat.QR_CODE);
         if (mScannerView != null) {
             mScannerView.setFormats(formats);
@@ -100,25 +97,66 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
             Log.d(TAG, getContext().getString(R.string.error_sound) + " : " + e.getMessage());
         }
 
-        if (conversorCoordenadas(result.getText())) {
-            Snackbar.make(getView(), getContext().getString(R.string.latitude) + ": " + latitud + "\n" +
-                    getContext().getString(R.string.longitude) + ": " + longitud, Snackbar.LENGTH_LONG).show();
-            Log.d(TAG, "Contents = " + result.getText() + ", Format = " + result.getBarcodeFormat().toString());
-
+        if (setCoordinates(result.getText())) {
             GPS = new GPSService(this.getContext());
             if (GPS.canGetLocation()) {
+                dialog = new DialogFragment() {
+                    @Override
+                    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                        builder.setMessage(getString(R.string.dialog_message, latitud, longitud));
+
+                        builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (latitud != 0 && longitud != 0) {
+                                    String url = "http://maps.google.com/maps?saddr=" + GPS.getLatitude() + "," + GPS.getLongitude() +
+                                            "&daddr=" + latitud + "," + longitud;
+                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                                    startActivity(intent);
+                                }
+                                dismiss();
+                            }
+                        });
+
+                        builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dismiss();
+                            }
+                        });
+                        
+                        return builder.create();
+                    }
+
+                    @Override
+                    public void onPause() {
+                        super.onPause();
+                        latitud = longitud = 0;
+                    }
+                };
+                dialog.show(getActivity().getFragmentManager(), "dialog");
             } else {
                 GPS.showSettingsAlert();
             }
         }
+        mScannerView.resumeCameraPreview(this);
     }
 
-    private boolean conversorCoordenadas(String text) {
+    private boolean setCoordinates(String text) {
         String[] cadena = text.split("_");
+        double lat, lon;
         try {
-            latitud = Double.parseDouble(cadena[1]);
-            longitud = Double.parseDouble(cadena[3]);
+            lat = Double.parseDouble(cadena[1]);
+            lon = Double.parseDouble(cadena[3]);
+
+            if (lat == latitud && lon == longitud) {
+                return false;
+            } else {
+                latitud = lat;
+                longitud = lon;
+            }
         } catch (Exception e) {
             return false;
         }
@@ -138,6 +176,4 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
         super.onPause();
         mScannerView.stopCamera();           // Stop camera on pause
     }
-
-
 }

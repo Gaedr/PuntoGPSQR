@@ -15,4 +15,9 @@
 
     <!-- ERROR -->
     <string name="error_sound">Can\'t play the sound</string>
+
+    <!-- DIALOG -->
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_ok">Go!</string>
+    <string name="dialog_message">Location detected\nLatitude: %1$s\nLength: %2$s\nDo you wan\'t to go there?</string>
 </resources>
