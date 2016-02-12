@@ -18,54 +18,64 @@ package es.gaedr_space.puntogpsqr;
 
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+/**
+ * Clase para generar el Servicio del GPS
+ *
+ * @author gaedr
+ */
 public class GPSService extends Service implements LocationListener {
-
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
+    private final String TAG = GPSService.class.getSimpleName();
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 metros
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minuto
 
     private final Context mContext;
-
-    //Flags de comprobación
-    private boolean isGPSEnabled = false;
-    private boolean isNetworkEnabled = false;
     private boolean canGetLocation = false;
-
     private Location location;
     private double latitude;
     private double longitude;
 
     protected LocationManager locationManager;
 
+    /**
+     * Constructor por defecto de la clase
+     */
     public GPSService() {
         mContext = getApplicationContext();
         getLocation();
     }
 
+    /**
+     * Constructor básico de la clase
+     *
+     * @param context Contexto de la clase
+     */
     public GPSService(Context context) {
         this.mContext = context;
         getLocation();
     }
 
+    /**
+     * Método que devuelve la localización actual a través del GPS y de la red
+     *
+     * @return Location
+     */
     public Location getLocation() {
         try {
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             // Comprobamos el estado del GPS
-            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             // Comprobamos el estado de la red
-            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if (isGPSEnabled || isNetworkEnabled) {
                 this.canGetLocation = true;
@@ -75,7 +85,7 @@ public class GPSService extends Service implements LocationListener {
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
+                    Log.d(TAG, "Network OK");
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
@@ -91,7 +101,7 @@ public class GPSService extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
+                        Log.d(TAG, "GPS Activo");
                         if (locationManager != null) {
                             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
@@ -112,7 +122,9 @@ public class GPSService extends Service implements LocationListener {
     }
 
     /**
-     * Function to get latitude
+     * Función que devuelve la latitud
+     *
+     * @return double
      */
     public double getLatitude() {
         if (location != null) {
@@ -124,7 +136,9 @@ public class GPSService extends Service implements LocationListener {
     }
 
     /**
-     * Function to get longitude
+     * Función que devuelve la longitud
+     *
+     * @return double
      */
     public double getLongitude() {
         if (location != null) {
@@ -136,42 +150,12 @@ public class GPSService extends Service implements LocationListener {
     }
 
     /**
-     * Function to check if best network provider
+     * Función para comprobar si se puede obtener la localización
      *
      * @return boolean
      */
     public boolean canGetLocation() {
         return this.canGetLocation;
-    }
-
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-
-        // Configuración del título del mensaje
-        alertDialog.setTitle(mContext.getString(R.string.gps_settings_title));
-
-        // Configuración del cuerpo del mensaje
-        alertDialog.setMessage(mContext.getString(R.string.gps_settings_message));
-
-        // Acción del botón "Configurar"
-        alertDialog.setPositiveButton(mContext.getString(R.string.gps_settings_setting),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        mContext.startActivity(intent);
-                    }
-                });
-
-        // Acción del botón "Cancelar"
-        alertDialog.setNegativeButton(mContext.getString(R.string.gps_settings_cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-        // Muestra el mensaje
-        alertDialog.show();
     }
 
     @Override

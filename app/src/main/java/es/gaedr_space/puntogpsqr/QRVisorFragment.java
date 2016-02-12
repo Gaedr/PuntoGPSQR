@@ -14,13 +14,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Clase encargada de leer el código QR y mostrar su contenido
- *
- * @author: Samuel Peregrina Morillas y Nieves V. Velásquez Díaz
- * @version: 2016/02/07-1
- */
-
 package es.gaedr_space.puntogpsqr;
 
 import android.app.Dialog;
@@ -31,6 +24,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -46,23 +40,30 @@ import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
+/**
+ * Clase encargada de leer el código QR y mostrar su contenido
+ *
+ * @author gaedr
+ */
 public class QRVisorFragment extends Fragment implements ZXingScannerView.ResultHandler {
 
+    private final String TAG = this.getClass().getSimpleName();
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String CAMERA_ID = "CAMERA_ID";
-    private ZXingScannerView mScannerView;
+
     private boolean mAutoFocus;
-    private int mCameraId = 0;
-    private String TAG = this.getClass().getSimpleName();
+    private int mCameraId;
     private double latitud;
     private double longitud;
-    private DialogFragment dialog;
 
+    private ZXingScannerView mScannerView;
     private GPSService GPS;
 
+    /**
+     * Constructor por defecto de la clase
+     */
     public QRVisorFragment() {
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +80,9 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
         return mScannerView;
     }
 
+    /**
+     * Método que setea los formatos aceptados por el lector
+     */
     public void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<>();
         formats.add(BarcodeFormat.QR_CODE);
@@ -87,6 +91,11 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
         }
     }
 
+    /**
+     * Método que se lanza cada vez que se encuentra un resultado para su manejo
+     *
+     * @param result que contiene el contenido del QR
+     */
     @Override
     public void handleResult(Result result) {
         try {
@@ -97,10 +106,10 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
             Log.d(TAG, getContext().getString(R.string.error_sound) + " : " + e.getMessage());
         }
 
-        if (setCoordinates(result.getText())) {
+        if (transforStringToCoordinates(result.getText())) {
             GPS = new GPSService(this.getContext());
             if (GPS.canGetLocation()) {
-                dialog = new DialogFragment() {
+                DialogFragment dialog = new DialogFragment() {
                     @Override
                     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -113,7 +122,7 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
                                 if (latitud != 0 && longitud != 0) {
                                     String url = "http://maps.google.com/maps?saddr=" + GPS.getLatitude() + "," + GPS.getLongitude() +
                                             "&daddr=" + latitud + "," + longitud;
-                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                                     startActivity(intent);
                                 }
@@ -126,7 +135,7 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
                                 dismiss();
                             }
                         });
-                        
+
                         return builder.create();
                     }
 
@@ -138,29 +147,70 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
                 };
                 dialog.show(getActivity().getFragmentManager(), "dialog");
             } else {
-                GPS.showSettingsAlert();
+                showSettingsAlert();
             }
         }
         mScannerView.resumeCameraPreview(this);
     }
 
-    private boolean setCoordinates(String text) {
+    /**
+     * Método que transforma un string recibido en coordenadas
+     * En caso de que la transformación sea correcta guarda estas
+     *
+     * @param text que contiene el texto que queremos convertir
+     * @return true si la conversión ha sido correcta, false en caso contrario
+     */
+    private boolean transforStringToCoordinates(String text) {
         String[] cadena = text.split("_");
         double lat, lon;
         try {
             lat = Double.parseDouble(cadena[1]);
             lon = Double.parseDouble(cadena[3]);
-
-            if (lat == latitud && lon == longitud) {
-                return false;
-            } else {
-                latitud = lat;
-                longitud = lon;
-            }
+            setCoordinates(lat, lon);
+            return true;
         } catch (Exception e) {
             return false;
         }
-        return true;
+    }
+
+    /**
+     * Método que guarda las coordenadas
+     *
+     * @param lat latitud que queremos guardar
+     * @param lon longitud que queremos guardar
+     */
+    private void setCoordinates(double lat, double lon) {
+        latitud = lat;
+        longitud = lon;
+    }
+
+    /**
+     * Método que muestra un diálogo para configurar el GPS
+     */
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+
+        alertDialog.setTitle(getContext().getString(R.string.gps_settings_title));
+
+        alertDialog.setMessage(getContext().getString(R.string.gps_settings_message));
+
+        // Acción del botón "Configurar"
+        alertDialog.setPositiveButton(getContext().getString(R.string.gps_settings_setting),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        getContext().startActivity(intent);
+                    }
+                });
+
+        // Acción del botón "Cancelar"
+        alertDialog.setNegativeButton(getContext().getString(R.string.gps_settings_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        alertDialog.show();
     }
 
     @Override
@@ -174,6 +224,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
     @Override
     public void onPause() {
         super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+        mScannerView.stopCamera();
     }
 }
