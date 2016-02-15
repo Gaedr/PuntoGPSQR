@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Puntogpsqr : Aplicación de busqueda de localización a través de un QR">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Puntogpsqr</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Gaedr/PuntoGPSQR">View on GitHub</a>
+
+          <h1 id="project_title">Puntogpsqr</h1>
+          <h2 id="project_tagline">Aplicación de busqueda de localización a través de un QR</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Gaedr/PuntoGPSQR/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Gaedr/PuntoGPSQR/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="práctica-3" class="anchor" href="#pr%C3%A1ctica-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Práctica 3</h2>
+
+<h2>
+<a id="android-gymkana" class="anchor" href="#android-gymkana" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ANDROID-GYMKANA</h2>
+
+<h3>
+<a id="aplicación-punto-gpsqr" class="anchor" href="#aplicaci%C3%B3n-punto-gpsqr" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Aplicación Punto GPSQR</h3>
+
+<h3>
+<a id="autores" class="anchor" href="#autores" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Autores</h3>
+
+<ul>
+<li>Samuel Peregrina Morillas</li>
+<li>Nieves Victoria Velásquez Díaz</li>
+</ul>
+
+<h3>
+<a id="duración-de-la-práctica" class="anchor" href="#duraci%C3%B3n-de-la-pr%C3%A1ctica" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Duración de la práctica.</h3>
+
+<p>Desde 12-Ene-2016 hasta 15-Feb-2016</p>
+
+<h3>
+<a id="breve-descripción-de-la-práctica" class="anchor" href="#breve-descripci%C3%B3n-de-la-pr%C3%A1ctica" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Breve descripción de la práctica.</h3>
+
+<p>Para la realización de esta práctica, se programarán cinco aplicaciónes android diferentes de forma que, cada una hace uso de los distintos sensores que posee el dispositivo android.</p>
+
+<h3>
+<a id="descripción-del-problema" class="anchor" href="#descripci%C3%B3n-del-problema" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Descripción del problema.</h3>
+
+<p>Esta aplicación consiste en, mediante el uso de la cámara y el GPS, leer un código QR que contendrá una latitud y una longitud para después obtener un recorrido desde la posición actual obtenida a través del GPS del móvil hasta la indicada en el código QR.</p>
+
+<h3>
+<a id="clases" class="anchor" href="#clases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Clases</h3>
+
+<p>Las clases usadas durante la realización de esta práctica han sido:</p>
+
+<ul>
+<li>
+<strong>GPSService:</strong> esta clase implementa la clase Service y se utiliza para obtener la posición actual del usuario a partir del GPS y de la red móvil.</li>
+<li>
+<strong>LocationActivity:</strong> esta clase es la encargada de contener el fragmento <strong>LocationListFragment</strong> que es el que contendrá la lista de las localizaciónes almacenadas en la BD.</li>
+<li>
+<strong>LocationViewAdapter:</strong> esta clase es el adaptador para visualizar cada elemento en la lista que se mostrará en el fragment comentado anteriomente.</li>
+<li>
+<strong>QRVisorFragment:</strong> fragment encargado de manejar los elementos de la cámara y captura de los QR, asi como de la previsualización continua de la cámara mientras se mantenga este fragment.
+Esta clase a su vez implementa la interfaz <strong>ZXingScannerView.ResultHandler</strong>, perteneciente la librería <a href="https://github.com/dm77/barcodescanner">BarCodeScanner</a>, una librería para trabajar con los códigos captados a través de la cámara.</li>
+<li>
+<strong>SiteLocation:</strong> clase contenedora de las localizaciónes que guardaremos en la BD.</li>
+<li>
+<strong>MainActivity:</strong> actividad inicial encargada de lanzar el fragment <strong>QRVisorFragment</strong> y de recoger el evento que lanzará la aplicación <em>GoogleMaps</em>.</li>
+</ul>
+
+<h3>
+<a id="métodos" class="anchor" href="#m%C3%A9todos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Métodos.</h3>
+
+<ul>
+<li>Métodos a destacar dentro de la clase <strong>GPSService</strong>:
+
+<ul>
+<li>
+<strong>getLocation:</strong> este método obtendra la localización del GPS y de la red comprobando si estos están activos para hacelo, en caso de que no pueda con ninguno lanzará un mensaje para que el usuario configure el GPS.</li>
+</ul>
+</li>
+<li>Métodos a destacar en <strong>QRVisorFragment</strong>:
+
+<ul>
+<li>
+<strong>setupFormats:</strong> este método genera la lista del tipo de códigos que leerá el visor y lanzará un evento de lectura</li>
+<li>
+<strong>handleResults:</strong> este método se lanzará cada vez que se encuentre un código QR y lanzará <em>GoogleMaps</em> en caso de que contenga información correcta o dará un error en caso contrario.</li>
+<li>
+<strong>mapsLauncher:</strong> método estático que genera el intent de <em>GoogleMaps</em> con la localización actual y el destino</li>
+</ul>
+</li>
+</ul>
+
+<p>El resto de métodos no se comentan ya que pertenecen al ciclo de vida de la aplicación.</p>
+
+<h3>
+<a id="bibliografía" class="anchor" href="#bibliograf%C3%ADa" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bibliografía</h3>
+
+<ul>
+<li>
+<a href="https://github.com/dm77/barcodescanner">BarCodeScanner</a>: librería de reconocimiento de códigos a través de la cámara</li>
+<li>
+<a href="http://iconmonstr.com/">iconmonstr</a>: librería de imagenes con licencia GNU</li>
+<li>
+<a href="http://www.sgoliver.net/blog/localizaci%C3%B3n-geografica-en-android-i/">SGOliver: localización Geografica en Android (I)</a> : obtencion de la posición actual a través del GPS</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Puntogpsqr maintained by <a href="https://github.com/Gaedr">Gaedr</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
