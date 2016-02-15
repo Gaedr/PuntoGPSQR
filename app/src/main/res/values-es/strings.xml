@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PuntoGPSQR</string>
-    <string name="action_settings">Configuración</string>
     <string name="latitude">Latitud</string>
     <string name="longitude">Longitud</string>
     <string name="gps_settings_title">Activación del GPS</string>
@@ -12,4 +11,10 @@
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_ok">¡Ir!</string>
     <string name="dialog_message">Localización detectada:\nLatitud: %1$s\nLongitud: %2$s\n¿Quieres ir al sitio?</string>
+    <string name="menu_locations">Localizaciones</string>
+    <string name="icon_map_description">Map icon</string>
+    <string name="item_name">Nombre</string>
+    <string name="item_default_name">Lugar %s</string>
+    <string name="item_latitude">Latitud: %s</string>
+    <string name="item_longitude">Longitud: %s</string>
 </resources>

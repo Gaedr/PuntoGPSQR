@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PuntoGPSQR</string>
-    <string name="action_settings">Configure</string>
+    <string name="menu_locations">Locations</string>
 
     <!-- QR -->
     <string name="latitude">Latitude</string>
@@ -20,4 +20,11 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">Go!</string>
     <string name="dialog_message">Location detected\nLatitude: %1$s\nLength: %2$s\nDo you wan\'t to go there?</string>
+    <string name="icon_map_description">Map icon</string>
+
+    <!-- ITEM -->
+    <string name="item_name">Place</string>
+    <string name="item_latitude">Latitude: %s</string>
+    <string name="item_longitude">Longitude: %s</string>
+    <string name="item_default_name">Place %s</string>
 </resources>

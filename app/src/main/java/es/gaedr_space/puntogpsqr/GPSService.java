@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Samuel Peregrina Morillas <gaedr0@gmail.com>, Nieves V. Velásquez Díaz <chibi.pawn@gmail.com>
+ * Copyright (c) 2016. Samuel Peregrina Morillas <gaedr@correo.ugr.es>, Nieves V. Velásquez Díaz <nievesvvd@correo.ugr.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public class GPSService extends Service implements LocationListener {
     /**
      * Constructor por defecto de la clase
      */
+    @SuppressWarnings("unused")
     public GPSService() {
         mContext = getApplicationContext();
         getLocation();
@@ -147,6 +148,15 @@ public class GPSService extends Service implements LocationListener {
 
         // return longitude
         return longitude;
+    }
+
+    /**
+     * Función que devuelve el objeto SiteLocation correspondiente a la localización devuelta por el GPS
+     *
+     * @return SiteLocation con la localización del GPS
+     */
+    public SiteLocation getSiteLocation() {
+        return SiteLocation.newInstance((float) latitude, (float) longitude);
     }
 
     /**
