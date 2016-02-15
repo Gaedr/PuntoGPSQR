@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Samuel Peregrina Morillas <gaedr0@gmail.com>, Nieves V. Velásquez Díaz <chibi.pawn@gmail.com>
+ * Copyright (c) 2016. Samuel Peregrina Morillas <gaedr@correo.ugr.es>, Nieves V. Velásquez Díaz <nievesvvd@correo.ugr.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,20 @@
 
 package es.gaedr_space.puntogpsqr;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.orm.SugarContext;
+
+public class MainActivity extends AppCompatActivity implements LocationsListFragment.OnListFragmentInteractionListener {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private final String LOCATION_LIST_TAG = "location_list_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        SugarContext.init(this);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.scanner_fragment, QRVisorFragment.newInstance())
+                .commit();
     }
 
     @Override
@@ -47,10 +59,24 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_locations) {
+            /*getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.scanner_fragment, LocationsListFragment.newInstance(), LOCATION_LIST_TAG)
+                    .commit();*/
+            Intent i = new Intent(this, LocationsActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onListFragmentInteraction(Context context, SiteLocation mSite) {
+        final GPSService GPS = new GPSService(this);
+        Log.d(TAG, "Pulsado item");
+        if (GPS.canGetLocation()) {
+            Log.d(TAG, "Abriendo Maps");
+            startActivity(QRVisorFragment.mapsLauncher(GPS.getSiteLocation(), mSite));
+        }
     }
 }

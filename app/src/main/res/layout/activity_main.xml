@@ -21,12 +21,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/scanner_fragment"
-        android:name="es.gaedr_space.puntogpsqr.QRVisorFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_main" />
-    <!--<include layout="@layout/content_main" />-->
+        android:layout_height="match_parent" />
 
 </android.support.design.widget.CoordinatorLayout>

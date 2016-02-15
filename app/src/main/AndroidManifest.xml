@@ -37,6 +37,24 @@
             android:name=".GPSService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="DATABASE"
+            android:value="locations.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="es.gaedr_space" />
+
+        <activity
+            android:name=".LocationsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
