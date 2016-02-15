@@ -47,6 +47,7 @@ public class GPSService extends Service implements LocationListener {
     /**
      * Constructor por defecto de la clase
      */
+    @SuppressWarnings("unused")
     public GPSService() {
         mContext = getApplicationContext();
         getLocation();

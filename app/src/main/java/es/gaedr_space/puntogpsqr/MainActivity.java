@@ -21,15 +21,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.orm.SugarContext;
 
 public class MainActivity extends AppCompatActivity implements LocationsListFragment.OnListFragmentInteractionListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private final String LOCATION_LIST_TAG = "location_list_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +55,7 @@ public class MainActivity extends AppCompatActivity implements LocationsListFrag
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_locations) {
-            /*getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.scanner_fragment, LocationsListFragment.newInstance(), LOCATION_LIST_TAG)
-                    .commit();*/
             Intent i = new Intent(this, LocationsActivity.class);
             startActivity(i);
         }
@@ -73,9 +66,7 @@ public class MainActivity extends AppCompatActivity implements LocationsListFrag
     @Override
     public void onListFragmentInteraction(Context context, SiteLocation mSite) {
         final GPSService GPS = new GPSService(this);
-        Log.d(TAG, "Pulsado item");
         if (GPS.canGetLocation()) {
-            Log.d(TAG, "Abriendo Maps");
             startActivity(QRVisorFragment.mapsLauncher(GPS.getSiteLocation(), mSite));
         }
     }

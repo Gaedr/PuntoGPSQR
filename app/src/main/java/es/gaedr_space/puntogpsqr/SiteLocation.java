@@ -19,67 +19,112 @@ package es.gaedr_space.puntogpsqr;
 import com.orm.SugarRecord;
 
 /**
- * Clase que contiene una localizacion
+ * Clase que contiene el objeto localización
+ * Extiende la clase SugarRecord para poder guardarse en la BD
  */
 public class SiteLocation extends SugarRecord {
     private String name;
     private float latitude;
     private float longitude;
 
+    /**
+     * Constructor por defecto de la clase
+     */
+    @SuppressWarnings("unused")
     public SiteLocation() {
     }
 
-    public SiteLocation(GPSService GPS) {
-
-    }
-
+    /**
+     * Constructor parametrizado de la clase
+     *
+     * @param latitude  contiene la latitud por defecto
+     * @param longitude contiene la longitud por defecto
+     */
     public SiteLocation(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
+    /**
+     * Constructor completo de la clase
+     *
+     * @param name      Nombre del lugar
+     * @param latitude  por defecto
+     * @param longitude por defecto
+     */
     public SiteLocation(String name, float latitude, float longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
+    /**
+     * Devuelve una nueva instancia del objeto
+     *
+     * @param latitude  latitud por defecto para su construcción
+     * @param longitude longitud por defecto para su construcción
+     * @return Una nueva instancia del objeto
+     */
     public static SiteLocation newInstance(float latitude, float longitude) {
         return new SiteLocation(latitude, longitude);
     }
 
+    /**
+     * Devuelve el nombre
+     *
+     * @return nombre del lugar
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Devuelve la latitud del lugar
+     *
+     * @return latitud guardada
+     */
     public float getLatitude() {
         return latitude;
     }
 
+    /**
+     * Devuelve la longitud del lugar
+     *
+     * @return longitud guardada
+     */
     public float getLongitude() {
         return longitude;
     }
 
+    /**
+     * Setea el nombre del lugar
+     *
+     * @param name nombre que contendrá el lugar
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
-
+    /**
+     * Comprueba si el lugar no está vacio
+     * Se considera vacío si tanto la latitud como la longitud son 0
+     *
+     * @return true si el lugar no está seteado, false si contiene una dirección
+     */
     public boolean isEmpty() {
         return this.getLatitude() == 0 && this.getLongitude() == 0;
     }
 
+    /**
+     * Compara entre dos localizaciones
+     *
+     * @param newSite que contiene una localizacion
+     * @return true si contiene la misma dirección, false en caso contrario
+     */
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof SiteLocation) {
-            SiteLocation siteCompare = (SiteLocation) o;
+    public boolean equals(Object newSite) {
+        if (newSite instanceof SiteLocation) {
+            SiteLocation siteCompare = (SiteLocation) newSite;
             return (this.latitude == siteCompare.getLatitude() &&
                     this.longitude == siteCompare.getLongitude());
         } else {

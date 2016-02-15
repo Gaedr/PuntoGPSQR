@@ -28,6 +28,11 @@ import java.util.List;
 
 import es.gaedr_space.puntogpsqr.LocationsListFragment.OnListFragmentInteractionListener;
 
+/**
+ * Clase adaptadora para dibujar cada objeto localizacion
+ *
+ * @author gaedr
+ */
 public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapter.ViewHolder> {
 
     private final List<SiteLocation> siteLocationList;
@@ -52,11 +57,6 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         holder.mSite = siteLocationList.get(position);
         holder.mLatitude.setText(mContext.getString(R.string.item_latitude, NumberFormat.getInstance().format(holder.mSite.getLatitude())));
         holder.mLongitude.setText(mContext.getString(R.string.item_longitude, NumberFormat.getInstance().format(holder.mSite.getLongitude())));
-//        holder.mLatLon.setText(
-//                mContext.getString(R.string.item_lat_lon,
-//                        NumberFormat.getInstance().format(holder.mSite.getLatitude()),
-//                        NumberFormat.getInstance().format(holder.mSite.getLongitude()))
-//        );
         holder.mLocationId.setText(
                 holder.mSite.getName() == null || holder.mSite.getName().isEmpty() ?
                         mContext.getString(R.string.item_default_name, holder.mSite.getId()) :
@@ -80,6 +80,9 @@ public class LocationViewAdapter extends RecyclerView.Adapter<LocationViewAdapte
         return siteLocationList.size();
     }
 
+    /**
+     * Clase ViewHolder que manejará la vista de cada item de la lista
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final View mView;
         public final TextView mLocationId;

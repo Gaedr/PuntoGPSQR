@@ -111,7 +111,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
         }
 
         if (transforStringToCoordinates(result.getText())) {
-            Log.d(TAG, "Nueva Localización");
             GPS = new GPSService(getActivity());
             if (GPS.canGetLocation()) {
                 mSiteLocation.save();
@@ -161,8 +160,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
             } else {
                 showSettingsAlert(getActivity());
             }
-        } else {
-            Log.d(TAG, "Misma localización");
         }
         mScannerView.resumeCameraPreview(this);
     }
@@ -218,7 +215,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
 
         alertDialog.setMessage(context.getString(R.string.gps_settings_message));
 
-        // Acción del botón "Configurar"
         alertDialog.setPositiveButton(context.getString(R.string.gps_settings_setting),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -227,7 +223,6 @@ public class QRVisorFragment extends Fragment implements ZXingScannerView.Result
                     }
                 });
 
-        // Acción del botón "Cancelar"
         alertDialog.setNegativeButton(context.getString(R.string.gps_settings_cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

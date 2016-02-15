@@ -28,22 +28,25 @@ import android.view.ViewGroup;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
- * <p>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * Fragmento que crea la lista de las localizaciones
+ *
+ * @author gaedr
  */
 public class LocationsListFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private List<SiteLocation> locationList;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * Constructor por defecto de la clase
      */
     public LocationsListFragment() {
     }
 
+    /**
+     * Devuelve una nueva instancia de la clase
+     *
+     * @return nueva instancia de la clase
+     */
     @SuppressWarnings("unused")
     public static LocationsListFragment newInstance() {
         return new LocationsListFragment();

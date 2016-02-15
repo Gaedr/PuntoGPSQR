@@ -21,6 +21,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+/**
+ * Actividad que carga el fragment de la lista de localizaciones para mostrarla
+ */
 public class LocationsActivity extends AppCompatActivity implements LocationsListFragment.OnListFragmentInteractionListener {
 
     @Override
@@ -33,11 +36,6 @@ public class LocationsActivity extends AppCompatActivity implements LocationsLis
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.location_list, LocationsListFragment.newInstance())
                 .commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     @Override
